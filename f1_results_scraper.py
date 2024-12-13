@@ -6,29 +6,24 @@ url_practice_1="https://www.formula1.com/en/results/2024/races/1252/abu-dhabi/pr
 response = requests.get(url_practice_1)
 if response.status_code == 200:
     soup = BeautifulSoup(response.text, 'html.parser')
+    rows = soup.select("tr")
 else:
     print("Failed to retrieve the webpage.")
     exit()
 
-#parsing and extracting data
-driver_names = []
-team_names = []
-lap_times = []
+for row in rows:
+        #for all td tag elements
+        cells = row.find_all("td")
+        
+        if len(cells) > 0:
+            #getting the specific required data points
+            position = cells[0].get_text(strip=True) 
+            driver = cells[1].get_text(strip=True)
+            team = cells[2].get_text(strip=True)
+            lap_time = cells[3].get_text(strip=True)
 
-table = soup.find('table', class_='resultsarchive-table')
-if table:
-    rows = table.find_all('tr')[1:]  # Skip the header row
-    for row in rows:
-        cells = row.find_all('td')
-        if cells:
-            lap_time = cells[4].text.strip()  # Adjust index based on table
-            driver_name = cells[2].text.strip()
-            team_name = cells[3].text.strip()
+            # Print the extracted data
+            print(f"Position: {position}, Driver: {driver}, Team: {team}, Lap Time: {lap_time}")
 
-            lap_times.append(lap_time)
-            driver_names.append(driver_name)
-            team_names.append(team_name)
-
-# Step 3: Output or process the data
-for lap, driver, team in zip(lap_times, driver_names, team_names):
-    print(f"Lap Time: {lap}, Driver: {driver}, Team: {team}")
+else:
+    print(f"Failed to fetch the webpage. Status code: {response.status_code}")
