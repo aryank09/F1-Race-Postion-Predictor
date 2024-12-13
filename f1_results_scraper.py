@@ -16,14 +16,13 @@ for row in rows:
         cells = row.find_all("td")
         
         if len(cells) > 0:
-            #getting the specific required data points
-            position = cells[0].get_text(strip=True) 
-            driver = cells[1].get_text(strip=True)
-            team = cells[2].get_text(strip=True)
-            lap_time = cells[3].get_text(strip=True)
+            #getting the specific required data points 
+            driver = cells[2].get_text(strip=True)
+            team = cells[3].get_text(strip=True)
+            lap_time = cells[4].get_text(strip=True)
 
             # Print the extracted data
-            print(f"Position: {position}, Driver: {driver}, Team: {team}, Lap Time: {lap_time}")
+            print(f"Driver: {driver}, Team: {team}, Lap Time: {lap_time}")
 
 else:
     print(f"Failed to fetch the webpage. Status code: {response.status_code}")
