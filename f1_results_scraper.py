@@ -32,8 +32,6 @@ def result_scraper(url):
                 temp.append(team)
                 temp.append(lap_time)
                 result.append(temp)
-            else:
-                print(f"Failed to fetch the webpage. Status code: {response.status_code}")
-                return    
+  
     return result
     
