@@ -9,4 +9,40 @@ results3 = scrpr.result_scraper("https://www.formula1.com/en/results/2024/races/
 #keep in mind time is str
 #keep in mind since practice session other drivers may be present than racing
 #so we have to add their time and divide it by the times they were in the practice session instead of 3
-print(results1)
+
+def find_string_index(target):
+    for outer_index, inner_list in enumerate(total_results):
+        if target in inner_list:
+            return outer_index
+    return None
+
+def time_in_seconds(time_str):
+    minutes, seconds = map(float, time_str.split(":"))
+    total_seconds = minutes * 60 + seconds
+    return total_seconds
+
+total_results = []
+
+driver_name = set()
+
+for x in range(1,4):
+    results = eval(f"results{x}") if f"results{x}" in globals() else []
+    for i in range(len(results)):
+        if results[i][0] not in driver_name:
+            total_seconds = time_in_seconds(results[i][2])
+            results[i][2] = total_seconds
+            count = 1
+            results[i].append(count)
+            total_results.append(results[i])
+            driver_name.add(results[i][0]) 
+        else:
+            outer_index = find_string_index(results[i][0])
+            if outer_index is not None:
+                total_seconds = time_in_seconds(results[i][2])
+                total_results[outer_index][2] += total_seconds
+                total_results[outer_index][3] += 1
+
+
+
+print(total_results)
+print(len(total_results))
