@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import warnings
 
-warnings.filterwarnings("ignore", category=UserWarning, message="urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'.*")
+warnings.simplefilter("ignore")
 
 def result_scraper(url):
     #url="https://www.formula1.com/en/results/2024/races/1252/abu-dhabi/practice/1"
