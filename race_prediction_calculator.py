@@ -42,7 +42,32 @@ for x in range(1,4):
                 total_results[outer_index][2] += total_seconds
                 total_results[outer_index][3] += 1
 
+def format_time(seconds):
+        minutes = int(seconds // 60)  
+        remaining_seconds = seconds % 60  
+        return f"{minutes}:{remaining_seconds:06.3f}"
+
+def format_prediction(sorted_prediction): 
+    for result in sorted_prediction:
+        if isinstance(result[2], (int, float)):
+            result[2] = format_time(result[2])
+
+    return sorted_prediction
 
 
-print(total_results)
-print(len(total_results))
+def predictor(total_results):
+    prediction = []
+    for i in range(len(total_results)):
+        temp = []
+        temp.append(total_results[i][0])
+        temp.append(total_results[i][1])
+        predicted_time = total_results[i][2]/total_results[i][3]
+        temp.append(predicted_time)
+        prediction.append(temp)
+    return prediction
+
+prediction = predictor(total_results)
+sorted_prediction = sorted(prediction, key=lambda x: x[2])
+formated_prediction = format_prediction(sorted_prediction)
+for index, result in enumerate(formated_prediction, start=1):
+    print(f"{index}. {result}")
