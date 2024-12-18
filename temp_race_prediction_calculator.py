@@ -31,7 +31,7 @@ race_id_mapping = {
     "abu-dhabi": 1252
 }
 
-def find_string_index(target):
+def find_string_index(target, total_results):
     for outer_index, inner_list in enumerate(total_results):
         if target in inner_list:
             return outer_index
@@ -101,7 +101,7 @@ def prediction_driver(race_weekend_name):
                 total_results.append(results[i])
                 driver_name.add(results[i][0]) 
             else:
-                outer_index = find_string_index(results[i][0])
+                outer_index = find_string_index(results[i][0],total_results)
                 if outer_index is not None:
                     total_seconds = time_in_seconds(results[i][2])
                     total_results[outer_index][2] += total_seconds
