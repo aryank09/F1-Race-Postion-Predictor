@@ -76,12 +76,15 @@ def build_f1_url(race_name, session_number):
         return None 
 
     #Construct and return the URL
-    return f"https://www.formula1.com/en/results/2024/races/{race_id}/{race_name_key}/{session}/{session_number}"
+    if(session_number == 1 or session_number == 2 or session_number == 3):
+        return f"https://www.formula1.com/en/results/2024/races/{race_id}/{race_name_key}/practice/{session_number}"
+    else:
+        return f"https://www.formula1.com/en/results/2024/races/{race_id}/{race_name_key}/starting-grid/{session_number}"   
 
-results1 = scrpr.result_scraper("https://www.formula1.com/en/results/2024/races/1252/abu-dhabi/practice/1")
-results2 = scrpr.result_scraper("https://www.formula1.com/en/results/2024/races/1252/abu-dhabi/practice/2")
-results3 = scrpr.result_scraper("https://www.formula1.com/en/results/2024/races/1252/abu-dhabi/practice/3")
-results4 = scrpr.result_scraper("https://www.formula1.com/en/results/2024/races/1252/abu-dhabi/starting-grid")
+# results1 = scrpr.result_scraper("https://www.formula1.com/en/results/2024/races/1252/abu-dhabi/practice/1")
+# results2 = scrpr.result_scraper("https://www.formula1.com/en/results/2024/races/1252/abu-dhabi/practice/2")
+# results3 = scrpr.result_scraper("https://www.formula1.com/en/results/2024/races/1252/abu-dhabi/practice/3")
+# results4 = scrpr.result_scraper("https://www.formula1.com/en/results/2024/races/1252/abu-dhabi/starting-grid")
 
 def prediction_driver(race_weekend_name):
 
@@ -91,7 +94,7 @@ def prediction_driver(race_weekend_name):
     driver_name = set()
 
     for x in range(1,5):
-        results = eval(f"results{x}") if f"results{x}" in globals() else []
+        results = scrpr.result_scraper(build_f1_url(race_weekend_name,x))
         for i in range(len(results)):
             if results[i][0] not in driver_name:
                 total_seconds = time_in_seconds(results[i][2])
