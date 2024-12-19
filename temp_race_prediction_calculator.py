@@ -16,7 +16,7 @@ race_id_mapping = {
     "spain": 1236,
     "canada": 1237,
     "austria": 1238,
-    "britain": 1239,
+    "great-britain": 1239,
     "hungary": 1240,
     "belgium": 1241,
     "netherlands": 1242,

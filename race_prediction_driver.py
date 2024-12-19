@@ -7,3 +7,23 @@ if __name__ == "__main__":
     race_name = input("Enter the race name: ").strip()
 
     prdctr.prediction_driver(race_name)
+
+#isssues with the following races
+#saudi arabia
+#japan
+#china(sprint)
+#miami(sprint)
+#emilia romagna (issue with scrpr)
+#monaco
+#canada
+#spain
+#austria(sprint)
+#great britain (issue with scrpr)
+#hungary
+#netherlands
+#italy
+#azerbaijan
+#united-states(sprint)
+#mexico
+#brazil(sprint)
+#qatar(sprint)
