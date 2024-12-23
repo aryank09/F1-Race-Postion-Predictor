@@ -11,17 +11,24 @@ def result_scraper(url):
     soup = BeautifulSoup(response.text, 'html.parser')
     rows = soup.select("tr")
 
-    headers = []
-    for row in rows:
-        th_cells = row.find_all("th")
-        if th_cells:
-            headers = [th.get_text(strip=True).upper() for th in th_cells]
-            break  #Only process the first header row
-    
+    if "practice" or "starting" in url:
+        driver_idx = 2
+        team_idx = 3
+        time_idx = 4
+
+    # headers = []
+    # for row in rows:
+    #     th_cells = row.find_all("th")
+    #     if th_cells:
+    #         headers = [th.get_text(strip=True).upper() for th in th_cells]
+    #         break  #Only process the first header row
+    # print(headers)
     #Identifying column indices
-    driver_idx = headers.index("DRIVER") if "DRIVER" in headers else -1
-    team_idx = headers.index("CAR") if "CAR" in headers else -1
-    time_idx = headers.index("TIME") if "TIME" in headers else -1
+    # driver_idx = headers.index("DRIVER") if "DRIVER" in headers else -1
+    # team_idx = headers.index("CAR") if "CAR" in headers else -1
+    # time_idx = headers.index("TIME") if "TIME" in headers else -1
+
+    #print(driver_idx, team_idx, time_idx)
 
     if driver_idx == -1 or team_idx == -1 or time_idx == -1:
         print("Required columns not found in the table.")

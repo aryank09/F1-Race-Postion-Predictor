@@ -13,12 +13,12 @@ if __name__ == "__main__":
 #japan
 #china(sprint)
 #miami(sprint)
-#emilia romagna (issue with scrpr)
+#emilia romagna (issue with scrpr) - fixed!
 #monaco
 #canada
 #spain
 #austria(sprint)
-#great britain (issue with scrpr)
+#great britain (issue with scrpr) - fixed!
 #hungary
 #netherlands
 #italy
