@@ -9,21 +9,12 @@ if __name__ == "__main__":
     prdctr.prediction_driver(race_name)
 
 #isssues with the following races
-#saudi arabia
-#japan
+#japan - issue with ocon being fastest avg
 #china(sprint)
 #miami(sprint)
-#emilia romagna (issue with scrpr) - fixed!
-#monaco
-#canada
-#spain
+#canada - logci error with 3 drivers being the fasts, which is not the case
 #austria(sprint)
-#great britain (issue with scrpr) - fixed!
-#hungary
-#netherlands
-#italy
-#azerbaijan
+#netherlands - issue with ocon
 #united-states(sprint)
-#mexico
 #brazil(sprint)
 #qatar(sprint)

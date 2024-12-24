@@ -38,9 +38,12 @@ def find_string_index(target, total_results):
     return None
 
 def time_in_seconds(time_str):
-    minutes, seconds = map(float, time_str.split(":"))
-    total_seconds = minutes * 60 + seconds
-    return total_seconds
+    if len(time_str) != 0:
+        minutes, seconds = map(float, time_str.split(":"))
+        total_seconds = minutes * 60 + seconds
+        return total_seconds
+    else:
+        return 0
 
 def format_time(seconds):
         minutes = int(seconds // 60)  
@@ -81,14 +84,8 @@ def build_f1_url(race_name, session_number):
     else:
         return f"https://www.formula1.com/en/results/2024/races/{race_id}/{race_name_key}/starting-grid/{session_number}"   
 
-# results1 = scrpr.result_scraper("https://www.formula1.com/en/results/2024/races/1252/abu-dhabi/practice/1")
-# results2 = scrpr.result_scraper("https://www.formula1.com/en/results/2024/races/1252/abu-dhabi/practice/2")
-# results3 = scrpr.result_scraper("https://www.formula1.com/en/results/2024/races/1252/abu-dhabi/practice/3")
-# results4 = scrpr.result_scraper("https://www.formula1.com/en/results/2024/races/1252/abu-dhabi/starting-grid")
-
 def prediction_driver(race_weekend_name):
 
-    #TODO: make the code take results generated in the below loop and make it build the url
     total_results = []
 
     driver_name = set()
@@ -107,11 +104,12 @@ def prediction_driver(race_weekend_name):
                 outer_index = find_string_index(results[i][0],total_results)
                 if outer_index is not None:
                     total_seconds = time_in_seconds(results[i][2])
-                    total_results[outer_index][2] += total_seconds
-                    total_results[outer_index][3] += 1
+                    if total_seconds != 0:
+                        total_results[outer_index][2] += total_seconds
+                        total_results[outer_index][3] += 1
 
     prediction = predictor(total_results)
-    sorted_prediction = sorted(prediction, key=lambda x: x[2])
+    sorted_prediction = sorted(prediction, key=lambda x: (x[2] == 0, x[2]))
     formated_prediction = format_prediction(sorted_prediction)
     for index, result in enumerate(formated_prediction, start=1):
         print(f"{index}. {result}")
