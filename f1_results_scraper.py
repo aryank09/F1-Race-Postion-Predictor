@@ -12,6 +12,7 @@ def result_scraper(url):
     rows = soup.select("tr")
 
     if "practice" or "starting" in url:
+        pos_idx = 0
         driver_idx = 2
         team_idx = 3
         time_idx = 4
@@ -30,7 +31,7 @@ def result_scraper(url):
 
     #print(driver_idx, team_idx, time_idx)
 
-    if driver_idx == -1 or team_idx == -1 or time_idx == -1:
+    if driver_idx == -1 or team_idx == -1 or time_idx == -1 or pos_idx == -1:
         print("Required columns not found in the table.")
         return []
 
@@ -40,14 +41,15 @@ def result_scraper(url):
         cells = row.find_all("td")
 
         #Skip rows that don't have enough cells
-        if len(cells) <= max(driver_idx, team_idx, time_idx):
+        if len(cells) <= max(pos_idx, driver_idx, team_idx, time_idx):
             continue
         
         try:
+            pos = cells[pos_idx].get_text(strip=True)
             driver = cells[driver_idx].get_text(strip=True)
             team = cells[team_idx].get_text(strip=True)
             lap_time = cells[time_idx].get_text(strip=True)
-            result.append([driver, team, lap_time])
+            result.append([driver, team, lap_time, pos])
         except IndexError:
             continue  #Skip problematic rows
 

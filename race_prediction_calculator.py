@@ -1,4 +1,5 @@
 import f1_results_scraper as scrpr
+import csv
 
 #format example ['LandoNorrisNOR', 'McLaren Mercedes', '1:24.542']
 #keep in mind time is str
@@ -31,85 +32,86 @@ race_id_mapping = {
     "abu-dhabi": 1252
 }
 
-def find_string_index(target, total_results):
-    for outer_index, inner_list in enumerate(total_results):
-        if target in inner_list:
-            return outer_index
+def time_in_seconds(time_str):
+    """Convert time from 'm:ss.mmm' to seconds."""
+    if time_str:
+        minutes, seconds = map(float, time_str.split(":"))
+        return minutes * 60 + seconds
     return None
 
-def time_in_seconds(time_str):
-    if len(time_str) != 0:
-        minutes, seconds = map(float, time_str.split(":"))
-        total_seconds = minutes * 60 + seconds
-        return total_seconds
-    else:
-        return 0
-
-def format_time(seconds):
-        minutes = int(seconds // 60)  
-        remaining_seconds = seconds % 60  
-        return f"{minutes}:{remaining_seconds:06.3f}"
-
-def format_prediction(sorted_prediction): 
-    for result in sorted_prediction:
-        if isinstance(result[2], (int, float)):
-            result[2] = format_time(result[2])
-
-    return sorted_prediction
-
-
-def predictor(total_results):
-    prediction = []
-    for i in range(len(total_results)):
-        temp = []
-        temp.append(total_results[i][0])
-        temp.append(total_results[i][1])
-        predicted_time = total_results[i][2]/total_results[i][3]
-        temp.append(predicted_time)
-        prediction.append(temp)
-    return prediction
-
 def build_f1_url(race_name, session_number):
+    """Build URL for scraping F1 results."""
     race_name_key = race_name.lower().replace(" ", "-")
-    
-    #Get race ID from the dictionary
     race_id = race_id_mapping.get(race_name_key)
-    
     if not race_id:
-        return None 
-
-    #Construct and return the URL
-    if(session_number == 1 or session_number == 2 or session_number == 3):
+        return None
+    if session_number in [1, 2, 3]:
         return f"https://www.formula1.com/en/results/2024/races/{race_id}/{race_name_key}/practice/{session_number}"
-    else:
-        return f"https://www.formula1.com/en/results/2024/races/{race_id}/{race_name_key}/starting-grid/{session_number}"   
+    elif session_number == 4:
+        return f"https://www.formula1.com/en/results/2024/races/{race_id}/{race_name_key}/starting-grid/4"
+    elif session_number == 5:
+        return f"https://www.formula1.com/en/results/2024/races/{race_id}/{race_name_key}/race-result"
 
+# Main driver function
 def prediction_driver(race_weekend_name):
+    """
+    Gather F1 data for a race weekend and structure it into
+    driverName, teamName, practice1, practice2, practice3, qualifying, finalPosition.
+    """
+    total_results = {}
+    session_labels = ["Practice 1", "Practice 2", "Practice 3", "Qualifying", "Final Position"]
 
-    total_results = []
+    for session_number in range(1, 6):
+        session_results = scrpr.result_scraper(build_f1_url(race_weekend_name, session_number))
+        
+        for result in session_results:
+            driver_name = result[0]
+            team_name = result[1]
 
-    driver_name = set()
+            # Add session timing or position
+            if session_number < 5:  # For practice and qualifying
+                time_str = result[2]
+                session_data = time_in_seconds(time_str)
+            else:  # For race result
+                session_data = int(result[3]) if result[3].isdigit() else None
 
-    for x in range(1,5):
-        results = scrpr.result_scraper(build_f1_url(race_weekend_name,x))
-        for i in range(len(results)):
-            if results[i][0] not in driver_name:
-                total_seconds = time_in_seconds(results[i][2])
-                results[i][2] = total_seconds
-                count = 1
-                results[i].append(count)
-                total_results.append(results[i])
-                driver_name.add(results[i][0]) 
-            else:
-                outer_index = find_string_index(results[i][0],total_results)
-                if outer_index is not None:
-                    total_seconds = time_in_seconds(results[i][2])
-                    if total_seconds != 0:
-                        total_results[outer_index][2] += total_seconds
-                        total_results[outer_index][3] += 1
+            if driver_name not in total_results:
+                # Initialize driver entry with default None values for all sessions
+                total_results[driver_name] = {
+                    "team": team_name,
+                    session_labels[0]: None,
+                    session_labels[1]: None,
+                    session_labels[2]: None,
+                    session_labels[3]: None,
+                    session_labels[4]: None
+                }
+            
+            # Update the session data
+            total_results[driver_name][session_labels[session_number - 1]] = session_data
 
-    prediction = predictor(total_results)
-    sorted_prediction = sorted(prediction, key=lambda x: (x[2] == 0, x[2]))
-    formated_prediction = format_prediction(sorted_prediction)
-    for index, result in enumerate(formated_prediction, start=1):
-        print(f"{index}. {result}")
+    # Save results to CSV
+    save_results_to_csv(total_results, file_name=f"{race_weekend_name}_results.csv")
+
+def save_results_to_csv(total_results, file_name="f1_results.csv"):
+    """
+    Save the structured F1 results to a CSV file.
+    """
+    headers = ["Driver Name", "Team", "Practice 1", "Practice 2", "Practice 3", "Qualifying", "Final Position"]
+    
+    with open(file_name, mode="w", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerow(headers)
+
+        for driver_name, data in total_results.items():
+            row = [
+                driver_name,
+                data["team"],
+                data["Practice 1"],
+                data["Practice 2"],
+                data["Practice 3"],
+                data["Qualifying"],
+                data["Final Position"]
+            ]
+            writer.writerow(row)
+
+    print(f"Results have been successfully saved to {file_name}")
