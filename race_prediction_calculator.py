@@ -90,28 +90,29 @@ def prediction_driver(race_weekend_name):
             total_results[driver_name][session_labels[session_number - 1]] = session_data
 
     # Save results to CSV
-    save_results_to_csv(total_results, file_name=f"{race_weekend_name}_results.csv")
+    # save_results_to_csv(total_results, file_name=f"{race_weekend_name}_results.csv")
+    return total_results
 
-def save_results_to_csv(total_results, file_name="f1_results.csv"):
-    """
-    Save the structured F1 results to a CSV file.
-    """
-    headers = ["Driver Name", "Team", "Practice 1", "Practice 2", "Practice 3", "Qualifying", "Final Position"]
+# def save_results_to_csv(total_results, file_name="f1_results.csv"):
+#     """
+#     Save the structured F1 results to a CSV file.
+#     """
+#     headers = ["Driver Name", "Team", "Practice 1", "Practice 2", "Practice 3", "Qualifying", "Final Position"]
     
-    with open(file_name, mode="w", newline="") as file:
-        writer = csv.writer(file)
-        writer.writerow(headers)
+#     with open(file_name, mode="w", newline="") as file:
+#         writer = csv.writer(file)
+#         writer.writerow(headers)
 
-        for driver_name, data in total_results.items():
-            row = [
-                driver_name,
-                data["team"],
-                data["Practice 1"],
-                data["Practice 2"],
-                data["Practice 3"],
-                data["Qualifying"],
-                data["Final Position"]
-            ]
-            writer.writerow(row)
+#         for driver_name, data in total_results.items():
+#             row = [
+#                 driver_name,
+#                 data["team"],
+#                 data["Practice 1"],
+#                 data["Practice 2"],
+#                 data["Practice 3"],
+#                 data["Qualifying"],
+#                 data["Final Position"]
+#             ]
+#             writer.writerow(row)
 
-    print(f"Results have been successfully saved to {file_name}")
+#     print(f"Results have been successfully saved to {file_name}")
