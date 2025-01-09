@@ -1,5 +1,5 @@
 # F1-Race-Position-Predictor
-![F1 Predictor](https://img.shields.io/badge/F1-Predictor-red?style=for-the-badge&logo=formula-1&logoColor=white)
+![F1 Predictor](https://img.shields.io/badge/F1-Predictor-red?style=for-the-badge&logo=race-car&logoColor=white)
 
 This project is a **work in progress** aimed at building a regression model to predict the top 5 finishers for an F1 race weekend. The model utilizes practice session data, qualifying results, driver points, and potentially constructor points to analyze performance trends and forecast race outcomes.
 
