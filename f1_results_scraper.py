@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 #Description: This method receives the required url and scrapes the results to add it into a list in the format of
 #[driver, team, lap_time, pos]
 #
-#PRE-CONDITIONS: .venv file should be present, the url provided should be an exisisting website
+#PRE-CONDITIONS: .venv file should be present(donwload requests and beautifulSoup), the url provided should be an exisisting website
 #
 #POST-CONDITIONS: results are scraped and appended to result list to in the above mentioned format
 #
