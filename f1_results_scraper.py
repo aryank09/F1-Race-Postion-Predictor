@@ -1,6 +1,20 @@
+#Description: This program uses requests and BeautifulSoup to scrape websites to get f1 results for specific session
+#Author: Aryan Khanna
+#Version: Jan 9th, 2025
+
 import requests
 from bs4 import BeautifulSoup
 
+#result_scraper method
+#Description: This method receives the required url and scrapes the results to add it into a list in the format of
+#[driver, team, lap_time, pos]
+#
+#PRE-CONDITIONS: .venv file should be present, the url provided should be an exisisting website
+#
+#POST-CONDITIONS: results are scraped and appended to result list to in the above mentioned format
+#
+#@params url, is str
+#@return result, is a list
 def result_scraper(url):
 
     response = requests.get(url)
@@ -17,20 +31,6 @@ def result_scraper(url):
         driver_idx = 2
         team_idx = 3
         time_idx = 4
-
-    # headers = []
-    # for row in rows:
-    #     th_cells = row.find_all("th")
-    #     if th_cells:
-    #         headers = [th.get_text(strip=True).upper() for th in th_cells]
-    #         break  #Only process the first header row
-    # print(headers)
-    #Identifying column indices
-    # driver_idx = headers.index("DRIVER") if "DRIVER" in headers else -1
-    # team_idx = headers.index("CAR") if "CAR" in headers else -1
-    # time_idx = headers.index("TIME") if "TIME" in headers else -1
-
-    #print(driver_idx, team_idx, time_idx)
 
     if driver_idx == -1 or team_idx == -1 or time_idx == -1 or pos_idx == -1:
         print("Required columns not found in the table.")
@@ -56,4 +56,4 @@ def result_scraper(url):
 
     return result
 
-    
+#TODO: May have build another method to scrape points  

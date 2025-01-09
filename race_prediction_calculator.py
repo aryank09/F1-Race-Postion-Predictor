@@ -1,3 +1,8 @@
+#Description: This program compiles the data and performs the necessary actions needed to performed to make ready for the
+#prediction model
+#Author: Aryan Khanna
+#Version: Jan 9th, 2025
+
 import f1_results_scraper as scrpr
 
 #format example ['LandoNorrisNOR', 'McLaren Mercedes', '1:24.542']
@@ -5,6 +10,7 @@ import f1_results_scraper as scrpr
 #keep in mind since practice session other drivers may be present than racing
 #so we have to add their time and divide it by the times they were in the practice session instead of 3
 
+#race ids to build the url
 race_id_mapping = {
     "bahrain": 1229,
     "saudi-arabia": 1230,
@@ -31,15 +37,33 @@ race_id_mapping = {
     "abu-dhabi": 1252
 }
 
+#time_in_seconds methods
+#Description: This method takes the avalible time in str format and converts it to seconds
+#
+#PRE-CONDTIONS: The parameter should be a string
+#
+#POST-CONDITIONS: Time is converted into seconds
+#
+#@params time_str is a str
+#@return float
 def time_in_seconds(time_str):
-    """Convert time from 'm:ss.mmm' to seconds."""
+    #Converting time from 'm:ss.mmm' to seconds.
     if time_str:
         minutes, seconds = map(float, time_str.split(":"))
         return minutes * 60 + seconds
     return None
 
+#build_f1_url methods
+#Description: This method build the url for web scrapping
+#
+#PRE-CONDTIONS: The parameter should be a string being the race name in correct spelling with the session number being 1-4
+#
+#POST-CONDITIONS: url is built
+#
+#@params race_name, is a str and session_number is a int
+#@return str
 def build_f1_url(race_name, session_number):
-    """Build URL for scraping F1 results."""
+    #Building URL for scraping F1 results.
     race_name_key = race_name.lower().replace(" ", "-")
     race_id = race_id_mapping.get(race_name_key)
     if not race_id:
@@ -49,6 +73,15 @@ def build_f1_url(race_name, session_number):
     elif session_number == 4:
         return f"https://www.formula1.com/en/results/2024/races/{race_id}/{race_name_key}/starting-grid/4"
 
+#get_driver_points methods
+#Description: Building in progress
+#
+#PRE-CONDTIONS: 
+#
+#POST-CONDITIONS: 
+#
+#@params 
+#@return 
 def get_driver_points(race_name):
     driver_points = {}
 
@@ -89,12 +122,16 @@ def get_driver_points(race_name):
 
     return driver_points
 
-# Main driver function
+#prediction_driver methods
+#Description: This the main driver function responisble fro compiling the data
+#
+#PRE-CONDTIONS: The race weekend name should be valid otherwise it will give error message
+#
+#POST-CONDITIONS: Results are compilied 
+#
+#@params race_weekend_name is a str
+#@return total_results is a dictionary 
 def prediction_driver(race_weekend_name):
-    """
-    Gather F1 data for a race weekend and structure it into
-    driverName, teamName, practice1, practice2, practice3, qualifying, finalPosition.
-    """
     total_results = {}
     session_labels = ["Practice 1", "Practice 2", "Practice 3", "Qualifying"]
     driver_points = get_driver_points(race_weekend_name)
@@ -105,15 +142,15 @@ def prediction_driver(race_weekend_name):
             driver_name = result[0]
             team_name = result[1]
 
-            # Add session timing or position
+            #Adding session timing or position
             if session_number < 5:  # For practice and qualifying
                 time_str = result[2]
                 session_data = time_in_seconds(time_str)
-            else:  # For race result
+            else:#For race result
                 session_data = int(result[3]) if result[3].isdigit() else None
 
             if driver_name not in total_results:
-                # Initialize driver entry with default None values for all sessions
+                #Initializing driver entry with default None values for all sessions
                 total_results[driver_name] = {
                     "team": team_name,
                     session_labels[0]: None,
@@ -122,7 +159,7 @@ def prediction_driver(race_weekend_name):
                     session_labels[3]: None,
                 }
             
-            # Update the session data
+            #Updating the session data
             total_results[driver_name][session_labels[session_number - 1]] = session_data
             if driver_name in driver_points:
                 total_results[driver_name]["Driver Points"] = driver_points[driver_name]

@@ -1,3 +1,7 @@
+#Description: This is the driver program to run the project
+#Author: Aryan Khanna
+#Version: Jan 9th, 2025
+
 import race_prediction_calculator as prdctr
 
 if __name__ == "__main__":
