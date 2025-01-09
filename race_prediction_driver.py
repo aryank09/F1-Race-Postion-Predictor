@@ -6,7 +6,7 @@ if __name__ == "__main__":
     #Get user input for the race name
     race_name = input("Enter the race name: ").strip()
 
-    prdctr.prediction_driver(race_name)
+    print(prdctr.prediction_driver(race_name))
 
 #isssues with the following races
 #japan - issue with ocon being fastest avg

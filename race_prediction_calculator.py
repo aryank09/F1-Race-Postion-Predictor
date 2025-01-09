@@ -1,5 +1,4 @@
 import f1_results_scraper as scrpr
-import csv
 
 #format example ['LandoNorrisNOR', 'McLaren Mercedes', '1:24.542']
 #keep in mind time is str
@@ -49,8 +48,69 @@ def build_f1_url(race_name, session_number):
         return f"https://www.formula1.com/en/results/2024/races/{race_id}/{race_name_key}/practice/{session_number}"
     elif session_number == 4:
         return f"https://www.formula1.com/en/results/2024/races/{race_id}/{race_name_key}/starting-grid/4"
-    elif session_number == 5:
-        return f"https://www.formula1.com/en/results/2024/races/{race_id}/{race_name_key}/race-result"
+
+def get_driver_points(race_name):
+    race_name = race_name.lower().replace(" ", "-")
+    race_column_mapping = {
+        "bahrain": "BRN",
+        "saudi-arabia": "SAU",
+        "australia": "AUS",
+        "japan": "JPN",
+        "china": "CHN",
+        "miami": "MIA",
+        "emilia-romagna": "ITA",
+        "monaco": "MON",
+        "canada": "CAN",
+        "spain": "ESP",
+        "austria": "AUT",
+        "great-britain": "GBR",
+        "hungary": "HUN",
+        "belgium": "BEL",
+        "netherlands": "NED",
+        "italy": "ITA2",
+        "azerbaijan": "AZB",
+        "singapore": "SIN",
+        "united-states": "USA",
+        "mexico": "MEX",
+        "brazil": "BRA",
+        "las-vegas": "LAS",
+        "qatar": "QAT",
+        "abu-dhabi": "ARE"
+    }
+    # Map the race name to the corresponding column header
+    target_race = race_column_mapping.get(race_name.lower())
+    if not target_race:
+        raise ValueError(f"Invalid race name: {race_name}")
+
+    # Scrape the standings table
+    standings_data = scrpr.result_scraper("https://www.espn.com/f1/standings")  # Update with your scraper logic
+
+    # Extract driver names from the first column of the standings data
+    driver_names = [row[0] for row in standings_data[1:]]  # Skip the header row
+
+    # Handle case where no points exist before the first race
+    if race_name.lower() == "bahrain":
+        return {driver: 0 for driver in driver_names}
+
+    # Identify the columns (assume the first row contains headers)
+    headers = standings_data[0]
+    if target_race not in headers:
+        raise ValueError(f"Race {race_name} not found in standings data.")
+
+    # Determine the index of the target race
+    target_index = headers.index(target_race)
+
+    # Calculate total points up to, but excluding, the target race
+    driver_points = {}
+    for row in standings_data[1:]:  # Skip header row
+        driver_name = row[0]  # Assuming driver name is in the first column
+        points_row = row[1:target_index]  # Points up to, but excluding, the target race
+
+        # Convert points to float and sum them up
+        total_points = sum(float(points) for points in points_row if points.replace('.', '', 1).isdigit())
+        driver_points[driver_name] = total_points
+
+    return driver_points
 
 # Main driver function
 def prediction_driver(race_weekend_name):
@@ -59,9 +119,9 @@ def prediction_driver(race_weekend_name):
     driverName, teamName, practice1, practice2, practice3, qualifying, finalPosition.
     """
     total_results = {}
-    session_labels = ["Practice 1", "Practice 2", "Practice 3", "Qualifying", "Final Position"]
-
-    for session_number in range(1, 6):
+    session_labels = ["Practice 1", "Practice 2", "Practice 3", "Qualifying"]
+    driver_points = get_driver_points(race_weekend_name)
+    for session_number in range(1, 5):
         session_results = scrpr.result_scraper(build_f1_url(race_weekend_name, session_number))
         
         for result in session_results:
@@ -83,11 +143,13 @@ def prediction_driver(race_weekend_name):
                     session_labels[1]: None,
                     session_labels[2]: None,
                     session_labels[3]: None,
-                    session_labels[4]: None
                 }
             
             # Update the session data
             total_results[driver_name][session_labels[session_number - 1]] = session_data
+            if driver_name in driver_points:
+                total_results[driver_name]["Driver Points"] = driver_points[driver_name]
+ 
 
     # Save results to CSV
     # save_results_to_csv(total_results, file_name=f"{race_weekend_name}_results.csv")
