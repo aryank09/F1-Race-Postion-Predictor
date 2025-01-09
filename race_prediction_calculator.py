@@ -50,65 +50,42 @@ def build_f1_url(race_name, session_number):
         return f"https://www.formula1.com/en/results/2024/races/{race_id}/{race_name_key}/starting-grid/4"
 
 def get_driver_points(race_name):
-    race_name = race_name.lower().replace(" ", "-")
-    race_column_mapping = {
-        "bahrain": "BRN",
-        "saudi-arabia": "SAU",
-        "australia": "AUS",
-        "japan": "JPN",
-        "china": "CHN",
-        "miami": "MIA",
-        "emilia-romagna": "ITA",
-        "monaco": "MON",
-        "canada": "CAN",
-        "spain": "ESP",
-        "austria": "AUT",
-        "great-britain": "GBR",
-        "hungary": "HUN",
-        "belgium": "BEL",
-        "netherlands": "NED",
-        "italy": "ITA2",
-        "azerbaijan": "AZB",
-        "singapore": "SIN",
-        "united-states": "USA",
-        "mexico": "MEX",
-        "brazil": "BRA",
-        "las-vegas": "LAS",
-        "qatar": "QAT",
-        "abu-dhabi": "ARE"
-    }
-    # Map the race name to the corresponding column header
-    target_race = race_column_mapping.get(race_name.lower())
-    if not target_race:
-        raise ValueError(f"Invalid race name: {race_name}")
-
-    # Scrape the standings table
-    standings_data = scrpr.result_scraper("https://www.espn.com/f1/standings")  # Update with your scraper logic
-
-    # Extract driver names from the first column of the standings data
-    driver_names = [row[0] for row in standings_data[1:]]  # Skip the header row
-
-    # Handle case where no points exist before the first race
-    if race_name.lower() == "bahrain":
-        return {driver: 0 for driver in driver_names}
-
-    # Identify the columns (assume the first row contains headers)
-    headers = standings_data[0]
-    if target_race not in headers:
-        raise ValueError(f"Race {race_name} not found in standings data.")
-
-    # Determine the index of the target race
-    target_index = headers.index(target_race)
-
-    # Calculate total points up to, but excluding, the target race
     driver_points = {}
-    for row in standings_data[1:]:  # Skip header row
-        driver_name = row[0]  # Assuming driver name is in the first column
-        points_row = row[1:target_index]  # Points up to, but excluding, the target race
 
-        # Convert points to float and sum them up
-        total_points = sum(float(points) for points in points_row if points.replace('.', '', 1).isdigit())
-        driver_points[driver_name] = total_points
+    #for temporary measure we are going to scrape results from driver pages and add them up
+
+    race_name_mapping = [
+        "bahrain",
+        "saudi-arabia",
+        "australia",
+        "azerbaijan",
+        "miami",
+        "emilia-romagna",
+        "monaco",
+        "spain",
+        "canada",
+        "austria",
+        "great-britain",
+        "hungary",
+        "belgium",
+        "netherlands",
+        "italy",
+        "singapore",
+        "japan",
+        "qatar",
+        "united-states",
+        "mexico",
+        "brazil",
+        "las-vegas",
+        "abu-dhabi"
+    ]
+
+    upper_limit = race_name_mapping.index(race_name)
+
+    for i in range(0, upper_limit):
+        #temp
+        #TODO: write the loop for adding driver points for the respective weekend limit to get total driver points
+        return None
 
     return driver_points
 
@@ -151,30 +128,5 @@ def prediction_driver(race_weekend_name):
                 total_results[driver_name]["Driver Points"] = driver_points[driver_name]
  
 
-    # Save results to CSV
-    # save_results_to_csv(total_results, file_name=f"{race_weekend_name}_results.csv")
     return total_results
 
-# def save_results_to_csv(total_results, file_name="f1_results.csv"):
-#     """
-#     Save the structured F1 results to a CSV file.
-#     """
-#     headers = ["Driver Name", "Team", "Practice 1", "Practice 2", "Practice 3", "Qualifying", "Final Position"]
-    
-#     with open(file_name, mode="w", newline="") as file:
-#         writer = csv.writer(file)
-#         writer.writerow(headers)
-
-#         for driver_name, data in total_results.items():
-#             row = [
-#                 driver_name,
-#                 data["team"],
-#                 data["Practice 1"],
-#                 data["Practice 2"],
-#                 data["Practice 3"],
-#                 data["Qualifying"],
-#                 data["Final Position"]
-#             ]
-#             writer.writerow(row)
-
-#     print(f"Results have been successfully saved to {file_name}")
