@@ -32,10 +32,6 @@ def result_scraper(url):
         team_idx = 3
         time_idx = 4
 
-    if driver_idx == -1 or team_idx == -1 or time_idx == -1 or pos_idx == -1:
-        print("Required columns not found in the table.")
-        return []
-
     result = []
 
     for row in rows:
@@ -56,4 +52,103 @@ def result_scraper(url):
 
     return result
 
-#TODO: May have build another method to scrape points  
+def build_driver_url(driver_name):
+    
+    base_url = "https://www.formula1.com/en/results/2024/drivers"
+
+    # Driver codes and names (example data)
+    drivers_data = {
+        "MaxVerstappenVER": ("MAXVER01", "max-verstappen"),
+        "LandoNorrisNOR": ("LANNOR01", "lando-norris"),
+        "CharlesLeclercLEC": ("CHALEC01", "charles-leclerc"),
+        "OscarPiastriPIA": ("OSCPIA01", "oscar-piastri"),
+        "CarlosSainzSAI": ("CARSAI01", "carlos-sainz"),
+        "GeorgeRussellRUS": ("GEORUS01", "george-russell"),
+        "LewisHamiltonHAM": ("LEWHAM01", "lewis-hamilton"),
+        "SergioPerezPER": ("SERPER01", "sergio-perez"),
+        "FernandoAlonsoALO": ("FERALO01", "fernando-alonso"),
+        "PierreGaslyGAS": ("PIEGAS01", "pierre-gasly"),
+        "NicoHulkenbergHUL": ("NICHUL01", "nico-hulkenberg"),
+        "YukiTsunodaTSU": ("YUKTSU01", "yuki-tsunoda"),
+        "LanceStrollSTR": ("LANSTR01", "lance-stroll"),
+        "EstebanOconOCO": ("ESTOCO01", "esteban-ocon"),
+        "KevinMagnussenMAG": ("KEVMAG01", "kevin-magnussen"),
+        "AlexanderAlbonALB": ("ALEALB01", "alexander-albon"),
+        "DanielRicciardoRIC": ("DANRIC01", "daniel-ricciardo"),
+        "OliverBearmanBEA": ("OLIBEA01", "oliver-bearman"),
+        "FrancoColapintoCOL": ("FRACOL01", "franco-colapinto"),
+        "ZhouGuanyuZHO": ("GUAZHO01", "zhou-guanyu"),
+        "LiamLawsonLAW": ("LIALAW01", "liam-lawson"),
+        "ValtteriBottasBOT": ("VALBOT01", "valtteri-bottas"),
+        "LoganSargeantSAR": ("LOGSAR01", "logan-sargeant"),
+        "JackDoohanDOO": ("JACDOO01", "jack-doohan"),
+    }
+
+    # Generate URLs for all drivers
+    driver_code = drivers_data[driver_name][0]
+    driver_url_name = drivers_data[driver_name][1]
+
+    return f"{base_url}/{driver_code}/{driver_url_name}"
+
+
+def points_scraper(race_weekend_name):
+    drivers = {
+        "MaxVerstappenVER": 0,
+        "LandoNorrisNOR": 0,
+        "CharlesLeclercLEC": 0,
+        "OscarPiastriPIA": 0,
+        "CarlosSainzSAI": 0,
+        "GeorgeRussellRUS": 0,
+        "LewisHamiltonHAM": 0,
+        "SergioPerezPER": 0,
+        "FernandoAlonsoALO": 0,
+        "PierreGaslyGAS": 0,
+        "NicoHulkenbergHUL": 0,
+        "YukiTsunodaTSU": 0,
+        "LanceStrollSTR": 0,
+        "EstebanOconOCO": 0,
+        "KevinMagnussenMAG": 0,
+        "AlexanderAlbonALB": 0,
+        "DanielRicciardoRIC": 0,
+        "OliverBearmanBEA": 0,
+        "FrancoColapintoCOL": 0,
+        "ZhouGuanyuZHO": 0,
+        "LiamLawsonLAW": 0,
+        "ValtteriBottasBOT": 0,
+        "LoganSargeantSAR": 0,
+        "JackDoohanDOO": 0,
+    }
+
+    for driver_name in drivers:
+        url = build_driver_url(driver_name)
+        response = requests.get(url)
+        if response.status_code != 200:
+            print(response.status_code)
+            print("Failed to retrieve the webpage.")
+            return []
+
+        soup = BeautifulSoup(response.text, 'html.parser')
+        rows = soup.select("tr")
+
+        grand_prix_indx = 0
+        pts_indx = 4
+
+        total_points = 0
+
+        for row in rows:
+            cells = row.find_all("td")
+            #Skip rows that don't have enough cells
+            if len(cells) <= max(grand_prix_indx, pts_indx):
+                continue
+            
+            try:
+                #TODO: fix issue where if driver not taken part in that grand prix all his point are getting added like bearman  
+                if (cells[grand_prix_indx].get_text(strip=True)).lower().replace(" ", "-") == race_weekend_name:
+                    break
+                total_points += int(cells[pts_indx].get_text(strip=True))
+            except IndexError:
+                continue  #Skip problematic rows
+        
+        drivers[driver_name] = total_points
+    
+    return drivers

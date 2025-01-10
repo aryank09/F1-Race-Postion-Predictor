@@ -83,42 +83,7 @@ def build_f1_url(race_name, session_number):
 #@params 
 #@return 
 def get_driver_points(race_name):
-    driver_points = {}
-
-    #for temporary measure we are going to scrape results from driver pages and add them up
-
-    race_name_mapping = [
-        "bahrain",
-        "saudi-arabia",
-        "australia",
-        "azerbaijan",
-        "miami",
-        "emilia-romagna",
-        "monaco",
-        "spain",
-        "canada",
-        "austria",
-        "great-britain",
-        "hungary",
-        "belgium",
-        "netherlands",
-        "italy",
-        "singapore",
-        "japan",
-        "qatar",
-        "united-states",
-        "mexico",
-        "brazil",
-        "las-vegas",
-        "abu-dhabi"
-    ]
-
-    upper_limit = race_name_mapping.index(race_name)
-
-    for i in range(0, upper_limit):
-        #temp
-        #TODO: write the loop for adding driver points for the respective weekend limit to get total driver points
-        return None
+    driver_points = scrpr.points_scraper(race_name)
 
     return driver_points
 
@@ -165,5 +130,7 @@ def prediction_driver(race_weekend_name):
                 total_results[driver_name]["Driver Points"] = driver_points[driver_name]
  
 
+    temp = get_driver_points(race_weekend_name)
+    print(temp)
     return total_results
 
