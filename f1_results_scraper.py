@@ -134,13 +134,26 @@ def points_scraper(race_weekend_name):
         pts_indx = 4
 
         total_points = 0
+        
+        #writing to check if driver took part in the grand_prix
+        races_participated = set()
+        for row in rows:
+            cells = row.find_all("td")
+            if len(cells) <= max(grand_prix_indx, pts_indx):
+                continue
+            if (cells[grand_prix_indx].get_text(strip=True)).lower().replace(" ", "-") not in races_participated:
+                races_participated.add((cells[grand_prix_indx].get_text(strip=True)).lower().replace(" ", "-"))
 
         for row in rows:
             cells = row.find_all("td")
             #Skip rows that don't have enough cells
             if len(cells) <= max(grand_prix_indx, pts_indx):
                 continue
-            
+                
+            if race_weekend_name not in races_participated:
+                drivers[driver_name] = 0
+                break
+
             try:
                 #TODO: fix issue where if driver not taken part in that grand prix all his point are getting added like bearman  
                 if (cells[grand_prix_indx].get_text(strip=True)).lower().replace(" ", "-") == race_weekend_name:
