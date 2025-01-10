@@ -154,8 +154,7 @@ def points_scraper(race_weekend_name):
                 drivers[driver_name] = 0
                 break
 
-            try:
-                #TODO: fix issue where if driver not taken part in that grand prix all his point are getting added like bearman  
+            try:  
                 if (cells[grand_prix_indx].get_text(strip=True)).lower().replace(" ", "-") == race_weekend_name:
                     break
                 total_points += int(cells[pts_indx].get_text(strip=True))
