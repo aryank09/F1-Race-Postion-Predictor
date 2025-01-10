@@ -90,8 +90,25 @@ def build_driver_url(driver_name):
 
     return f"{base_url}/{driver_code}/{driver_url_name}"
 
+def build_constructor_url(constructor_name):
+    constructors_url_map = {
+    "McLaren Mercedes": "McLaren-Mercedes",
+    "Ferrari": "Ferrari",
+    "Red Bull Racing Honda RBPT": "Red-Bull-Racing-Honda-RBPT",
+    "Mercedes": "Mercedes",
+    "Aston Martin Aramco Mercedes": "Aston-Martin-Aramco-Mercedes",
+    "Alpine Renault": "Alpine-Renault",
+    "Haas Ferrari": "Haas-Ferrari",
+    "RB Honda RBPT": "RB-Honda-RBPT",
+    "Williams Mercedes": "Williams-Mercedes",
+    "Kick Sauber Ferrari": "Kick-Sauber-Ferrari"
+    }
 
-def points_scraper(race_weekend_name):
+    base_url = "https://www.formula1.com/en/results/2024/team/"
+
+    return f"{base_url}{constructors_url_map[constructor_name]}"
+
+def driver_points_scraper(race_weekend_name):
     drivers = {
         "MaxVerstappenVER": 0,
         "LandoNorrisNOR": 0,
@@ -164,3 +181,50 @@ def points_scraper(race_weekend_name):
         drivers[driver_name] = total_points
     
     return drivers
+
+def constructors_points_scraper(race_weekend_name):
+    constructors = {
+    "McLaren Mercedes": 0,
+    "Ferrari": 0,
+    "Red Bull Racing Honda RBPT": 0,
+    "Mercedes": 0,
+    "Aston Martin Aramco Mercedes": 0,
+    "Alpine Renault": 0,
+    "Haas Ferrari": 0,
+    "RB Honda RBPT": 0,
+    "Williams Mercedes": 0,
+    "Kick Sauber Ferrari": 0
+    }
+
+    for constructor_name in constructors:
+        url = build_constructor_url(constructor_name)
+        response = requests.get(url)
+        if response.status_code != 200:
+            print(response.status_code)
+            print("Failed to retrieve the webpage.")
+            return []
+
+        soup = BeautifulSoup(response.text, 'html.parser')
+        rows = soup.select("tr")
+
+        grand_prix_indx = 0
+        pts_indx = 2
+
+        total_points = 0
+
+        for row in rows:
+            cells = row.find_all("td")
+            #Skip rows that don't have enough cells
+            if len(cells) <= max(grand_prix_indx, pts_indx):
+                continue
+
+            try:  
+                if (cells[grand_prix_indx].get_text(strip=True)).lower().replace(" ", "-") == race_weekend_name:
+                    break
+                total_points += int(cells[pts_indx].get_text(strip=True))
+            except IndexError:
+                continue  #Skip problematic rows
+        
+        constructors[constructor_name] = total_points
+    
+    return constructors

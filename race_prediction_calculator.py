@@ -83,7 +83,12 @@ def build_f1_url(race_name, session_number):
 #@params 
 #@return 
 def get_driver_points(race_name):
-    driver_points = scrpr.points_scraper(race_name)
+    driver_points = scrpr.driver_points_scraper(race_name)
+
+    return driver_points
+
+def get_constructor_points(race_name):
+    driver_points = scrpr.constructors_points_scraper(race_name)
 
     return driver_points
 
@@ -100,12 +105,13 @@ def prediction_driver(race_weekend_name):
     total_results = {}
     session_labels = ["Practice 1", "Practice 2", "Practice 3", "Qualifying"]
     driver_points = get_driver_points(race_weekend_name)
+    constructor_points = get_constructor_points(race_weekend_name)
     for session_number in range(1, 5):
         session_results = scrpr.result_scraper(build_f1_url(race_weekend_name, session_number))
         
         for result in session_results:
             driver_name = result[0]
-            team_name = result[1]
+            constructor_name = result[1]
 
             #Adding session timing or position
             if session_number < 5:  # For practice and qualifying
@@ -117,7 +123,7 @@ def prediction_driver(race_weekend_name):
             if driver_name not in total_results:
                 #Initializing driver entry with default None values for all sessions
                 total_results[driver_name] = {
-                    "team": team_name,
+                    "Constructor": constructor_name,
                     session_labels[0]: None,
                     session_labels[1]: None,
                     session_labels[2]: None,
@@ -126,11 +132,12 @@ def prediction_driver(race_weekend_name):
             
             #Updating the session data
             total_results[driver_name][session_labels[session_number - 1]] = session_data
+
             if driver_name in driver_points:
                 total_results[driver_name]["Driver Points"] = driver_points[driver_name]
- 
 
-    temp = get_driver_points(race_weekend_name)
-    print(temp)
+            if driver_name in driver_points:
+                total_results[driver_name]["Constructor Points"] = constructor_points[constructor_name]
+
     return total_results
 
