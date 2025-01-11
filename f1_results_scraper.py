@@ -179,7 +179,7 @@ def driver_points_scraper(race_weekend_name):
                 continue  #Skip problematic rows
         
         drivers[driver_name] = total_points
-    print(drivers)
+    
     return drivers
 
 def constructors_points_scraper(race_weekend_name):
