@@ -2,7 +2,8 @@
 #Author: Aryan Khanna
 #Version: Jan 9th, 2025
 
-import race_prediction_calculator as prdctr
+import race_prediction_calculator as data_collection
+import race_prediction_model as prdctr
 
 if __name__ == "__main__":
     print("Welcome to the F1 Race Results predictor!")
@@ -10,7 +11,12 @@ if __name__ == "__main__":
     #Get user input for the race name
     race_name = input("Enter the race name: ").strip()
 
-    print(prdctr.prediction_driver(race_name))
+    data = data_collection.prediction_driver(race_name)
+
+    print(data)
+
+    prdctr.main(data)
+
 
 #isssues with the following races
 #japan - issue with ocon being fastest avg
