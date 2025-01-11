@@ -167,19 +167,19 @@ def driver_points_scraper(race_weekend_name):
             if len(cells) <= max(grand_prix_indx, pts_indx):
                 continue
                 
-            if race_weekend_name not in races_participated:
+            if (race_weekend_name).lower().replace(" ", "-") not in races_participated:
                 drivers[driver_name] = 0
                 break
 
             try:  
-                if (cells[grand_prix_indx].get_text(strip=True)).lower().replace(" ", "-") == race_weekend_name:
+                if (cells[grand_prix_indx].get_text(strip=True)).lower().replace(" ", "-") == (race_weekend_name).lower().replace(" ", "-"):
                     break
                 total_points += int(cells[pts_indx].get_text(strip=True))
             except IndexError:
                 continue  #Skip problematic rows
         
         drivers[driver_name] = total_points
-    
+    print(drivers)
     return drivers
 
 def constructors_points_scraper(race_weekend_name):
@@ -219,7 +219,7 @@ def constructors_points_scraper(race_weekend_name):
                 continue
 
             try:  
-                if (cells[grand_prix_indx].get_text(strip=True)).lower().replace(" ", "-") == race_weekend_name:
+                if (cells[grand_prix_indx].get_text(strip=True)).lower().replace(" ", "-") == (race_weekend_name).lower().replace(" ", "-"):
                     break
                 total_points += int(cells[pts_indx].get_text(strip=True))
             except IndexError:
