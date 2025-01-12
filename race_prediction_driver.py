@@ -15,7 +15,7 @@ if __name__ == "__main__":
 
     print(data)
 
-    prdctr.debug_f1_data(data)
+    #prdctr.debug_f1_data(data)
 
 
 #not for sprint weekends

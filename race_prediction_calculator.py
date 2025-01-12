@@ -157,7 +157,7 @@ def required_data(results):
 
     cols = [col for col in df_sorted.columns if col != 'Race Finish Position']
     df_sorted = df_sorted[cols[:1] + ['Race Finish Position'] + cols[1:]]
-
+    df_sorted = df_sorted.fillna(0)
     return df_sorted
 
 def data_compiler_new(race_weekend_name):
