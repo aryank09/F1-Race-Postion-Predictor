@@ -18,13 +18,4 @@ if __name__ == "__main__":
     #prdctr.predict_race_finish_position(data)
 
 
-#isssues with the following races
-#japan - issue with ocon being fastest avg
-#china(sprint)
-#miami(sprint)
-#canada - logci error with 3 drivers being the fasts, which is not the case
-#austria(sprint)
-#netherlands - issue with ocon
-#united-states(sprint)
-#brazil(sprint)
-#qatar(sprint)
+#not for sprint weekends
