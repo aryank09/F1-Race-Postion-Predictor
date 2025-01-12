@@ -126,10 +126,11 @@ def data_compiler(race_weekend_name):
                 #Initializing driver entry with default None values for all sessions
                 total_results[driver_name] = {
                     "Constructor": constructor_name,
+                    "Grand Prix": race_weekend_name.lower().replace(" ", "-"),
                     session_labels[0]: None,
                     session_labels[1]: None,
                     session_labels[2]: None,
-                    session_labels[3]: None,
+                    session_labels[3]: None
                 }
             
             #Updating the session data
@@ -138,11 +139,13 @@ def data_compiler(race_weekend_name):
             if driver_name in driver_points:
                 total_results[driver_name]["Driver Points"] = driver_points[driver_name]
 
-            if driver_name in constructor_points:
+            if constructor_name in constructor_points:
                 total_results[driver_name]["Constructor Points"] = constructor_points[constructor_name]
             
             if driver_name in race_results:
                 total_results[driver_name]["Race Finish Position"] = race_results[driver_name]
+            
+
 
     return required_data(total_results)
 
@@ -177,3 +180,8 @@ def data_compiler_new(race_weekend_name):
         i += 1
     
     return result
+
+def current_race_data(race_weekend_name):
+    data = data_compiler(race_weekend_name)
+    data = data.drop(columns=['Race Finish Position', 'Grand Prix'], inplace=False)
+    return data

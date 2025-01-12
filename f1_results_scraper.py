@@ -285,5 +285,5 @@ def race_result_position_scraper(race_weekend_name):
             result[driver] = pos  # Map driver name to position
         except IndexError:
             continue  # Skip problematic rows
-
+        
     return result

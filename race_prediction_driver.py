@@ -13,9 +13,12 @@ if __name__ == "__main__":
 
     data = data_collection.data_compiler_new(race_name)
 
-    print(data)
+    current_data = data_collection.current_race_data(race_name)
 
-    #prdctr.debug_f1_data(data)
+    print(data)
+    current_race_data_list = [current_data]
+    #prdctr.train_f1_model(data)
+    prdctr.predict_next_grand_prix_position(data, current_race_data_list)
 
 
 #not for sprint weekends
