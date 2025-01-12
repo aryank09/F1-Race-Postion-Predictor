@@ -4,6 +4,7 @@
 #Version: Jan 9th, 2025
 
 import f1_results_scraper as scrpr
+import pandas as pd
 
 #format example ['LandoNorrisNOR', 'McLaren Mercedes', '1:24.542']
 #keep in mind time is str
@@ -15,27 +16,23 @@ race_id_mapping = {
     "bahrain": 1229,
     "saudi-arabia": 1230,
     "australia": 1231,
-    "azerbaijan": 1232,
-    "miami": 1233,
-    "emilia-romagna": 1234,
-    "monaco": 1235,
-    "spain": 1236,
+    "azerbaijan": 1245,
+    "emilia-romagna": 1235,
+    "monaco": 1236,
+    "spain": 1238,
     "canada": 1237,
-    "austria": 1238,
-    "great-britain": 1239,
-    "hungary": 1240,
-    "belgium": 1241,
-    "netherlands": 1242,
-    "italy": 1243,
-    "singapore": 1244,
-    "japan": 1245,
+    "great-britain": 1240,
+    "hungary": 1241,
+    "belgium": 1242,
+    "netherlands": 1243,
+    "italy": 1244,
+    "singapore": 1246,
+    "japan": 1232,
     "qatar": 1246,
-    "united-states": 1247,
     "mexico": 1248,
-    "brazil": 1249,
     "las-vegas": 1250,
     "abu-dhabi": 1252
-}
+    }
 
 #time_in_seconds methods
 #Description: This method takes the avalible time in str format and converts it to seconds
@@ -71,7 +68,7 @@ def build_f1_url(race_name, session_number):
     if session_number in [1, 2, 3]:
         return f"https://www.formula1.com/en/results/2024/races/{race_id}/{race_name_key}/practice/{session_number}"
     elif session_number == 4:
-        return f"https://www.formula1.com/en/results/2024/races/{race_id}/{race_name_key}/starting-grid/4"
+        return f"https://www.formula1.com/en/results/2024/races/{race_id}/{race_name_key}/starting-grid"
 
 #get_driver_points methods
 #Description: Building in progress
@@ -92,8 +89,13 @@ def get_constructor_points(race_name):
 
     return driver_points
 
-#prediction_driver methods
-#Description: This the main driver function responisble fro compiling the data
+def get_race_result_position(race_name):
+    driver_points = scrpr.race_result_position_scraper(race_name)
+
+    return driver_points
+
+#data_compiler methods
+#Description: This the main driver function responsible for compiling the data
 #
 #PRE-CONDTIONS: The race weekend name should be valid otherwise it will give error message
 #
@@ -101,11 +103,12 @@ def get_constructor_points(race_name):
 #
 #@params race_weekend_name is a str
 #@return total_results is a dictionary 
-def prediction_driver(race_weekend_name):
+def data_compiler(race_weekend_name):
     total_results = {}
     session_labels = ["Practice 1", "Practice 2", "Practice 3", "Qualifying"]
     driver_points = get_driver_points(race_weekend_name)
     constructor_points = get_constructor_points(race_weekend_name)
+    race_results = get_race_result_position(race_weekend_name)
     for session_number in range(1, 5):
         session_results = scrpr.result_scraper(build_f1_url(race_weekend_name, session_number))
         
@@ -132,12 +135,28 @@ def prediction_driver(race_weekend_name):
             
             #Updating the session data
             total_results[driver_name][session_labels[session_number - 1]] = session_data
-
+            
             if driver_name in driver_points:
                 total_results[driver_name]["Driver Points"] = driver_points[driver_name]
 
-            if driver_name in driver_points:
+            if driver_name in constructor_points:
                 total_results[driver_name]["Constructor Points"] = constructor_points[constructor_name]
+            
+            if driver_name in race_results:
+                total_results[driver_name]["Race Finish Position"] = race_results[driver_name]
 
-    return total_results
+    return required_data(total_results)
 
+def required_data(results):
+    df = pd.DataFrame.from_dict(results, orient='index')
+    
+    #Converting 'Race Finish Position' to numeric, treating 'NC' and 'DQ' as NaN
+    df['Race Finish Position'] = pd.to_numeric(df['Race Finish Position'], errors='coerce')
+    
+    # Sort the DataFrame by 'Race Finish Position' in ascending order
+    df_sorted = df.sort_values(by='Race Finish Position')
+
+    cols = [col for col in df_sorted.columns if col != 'Race Finish Position']
+    df_sorted = df_sorted[cols[:1] + ['Race Finish Position'] + cols[1:]]
+
+    return df_sorted

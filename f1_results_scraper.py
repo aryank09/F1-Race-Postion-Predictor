@@ -228,3 +228,62 @@ def constructors_points_scraper(race_weekend_name):
         constructors[constructor_name] = total_points
     
     return constructors
+
+def build_race_result_url(race_weekend_name):
+    race_id_mapping = {
+    "bahrain": 1229,
+    "saudi-arabia": 1230,
+    "australia": 1231,
+    "azerbaijan": 1245,
+    "emilia-romagna": 1235,
+    "monaco": 1236,
+    "spain": 1238,
+    "canada": 1237,
+    "great-britain": 1240,
+    "hungary": 1241,
+    "belgium": 1242,
+    "netherlands": 1243,
+    "italy": 1244,
+    "singapore": 1246,
+    "japan": 1232,
+    "qatar": 1246,
+    "mexico": 1248,
+    "las-vegas": 1250,
+    "abu-dhabi": 1252
+    }
+    race_name_key = race_weekend_name.lower().replace(" ", "-")
+    race_id = race_id_mapping.get(race_name_key)
+    return f"https://www.formula1.com/en/results/2024/races/{race_id}/{race_name_key}/race-result"
+
+
+def race_result_position_scraper(race_weekend_name):
+    url = build_race_result_url(race_weekend_name)
+    response = requests.get(url)
+    if response.status_code != 200:
+        print(response.status_code)
+        print("Failed to retrieve the webpage.")
+        return []
+
+    soup = BeautifulSoup(response.text, 'html.parser')
+    rows = soup.select("tr")
+
+    result = {}
+
+    pos_idx = 0
+    driver_idx = 2
+    
+    for row in rows:
+        cells = row.find_all("td")
+
+        # Skip rows that don't have enough cells
+        if len(cells) <= max(pos_idx, driver_idx):
+            continue
+        
+        try:
+            pos = cells[pos_idx].get_text(strip=True)
+            driver = cells[driver_idx].get_text(strip=True)
+            result[driver] = pos  # Map driver name to position
+        except IndexError:
+            continue  # Skip problematic rows
+
+    return result
