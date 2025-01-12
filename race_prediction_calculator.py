@@ -28,7 +28,6 @@ race_id_mapping = {
     "italy": 1244,
     "singapore": 1246,
     "japan": 1232,
-    "qatar": 1246,
     "mexico": 1248,
     "las-vegas": 1250,
     "abu-dhabi": 1252
@@ -160,3 +159,21 @@ def required_data(results):
     df_sorted = df_sorted[cols[:1] + ['Race Finish Position'] + cols[1:]]
 
     return df_sorted
+
+def data_compiler_new(race_weekend_name):
+    result = []
+
+    grandprix = [
+    "bahrain", "saudi-arabia", "australia", "japan",  "emilia-romagna", "monaco",
+     "canada", "spain", "great-britain", "hungary", "belgium", "netherlands", "italy", "azerbaijan",
+    "singapore", "mexico", "las-vegas", "abu-dhabi"]
+
+    i = 0
+
+    race_weekend_name = race_weekend_name.lower().replace(" ", "-")
+
+    while grandprix[i] != race_weekend_name:
+        result.append(data_compiler(grandprix[i]))
+        i += 1
+    
+    return result

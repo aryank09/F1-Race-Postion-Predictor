@@ -11,11 +11,11 @@ if __name__ == "__main__":
     #Get user input for the race name
     race_name = input("Enter the race name: ").strip()
 
-    data = data_collection.data_compiler(race_name)
+    data = data_collection.data_compiler_new(race_name)
 
     print(data)
 
-    #prdctr.predict_race_finish_position(data)
+    prdctr.debug_f1_data(data)
 
 
 #not for sprint weekends
