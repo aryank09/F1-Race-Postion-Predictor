@@ -17,7 +17,8 @@ if __name__ == "__main__":
 
     print(data)
     current_race_data_list = [current_data]
-    #prdctr.train_f1_model(data)
+    
+    #running the prediction model
     prdctr.predict_next_grand_prix_position(data, current_race_data_list)
 
 

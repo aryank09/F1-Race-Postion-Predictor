@@ -69,29 +69,6 @@ def build_f1_url(race_name, session_number):
     elif session_number == 4:
         return f"https://www.formula1.com/en/results/2024/races/{race_id}/{race_name_key}/starting-grid"
 
-#get_driver_points methods
-#Description: Building in progress
-#
-#PRE-CONDTIONS: 
-#
-#POST-CONDITIONS: 
-#
-#@params 
-#@return 
-def get_driver_points(race_name):
-    driver_points = scrpr.driver_points_scraper(race_name)
-
-    return driver_points
-
-def get_constructor_points(race_name):
-    driver_points = scrpr.constructors_points_scraper(race_name)
-
-    return driver_points
-
-def get_race_result_position(race_name):
-    driver_points = scrpr.race_result_position_scraper(race_name)
-
-    return driver_points
 
 #data_compiler methods
 #Description: This the main driver function responsible for compiling the data
@@ -105,9 +82,9 @@ def get_race_result_position(race_name):
 def data_compiler(race_weekend_name):
     total_results = {}
     session_labels = ["Practice 1", "Practice 2", "Practice 3", "Qualifying"]
-    driver_points = get_driver_points(race_weekend_name)
-    constructor_points = get_constructor_points(race_weekend_name)
-    race_results = get_race_result_position(race_weekend_name)
+    driver_points = scrpr.driver_points_scraper(race_weekend_name)
+    constructor_points = scrpr.constructors_points_scraper(race_weekend_name)
+    race_results = scrpr.race_result_position_scraper(race_weekend_name)
     for session_number in range(1, 5):
         session_results = scrpr.result_scraper(build_f1_url(race_weekend_name, session_number))
         
@@ -149,6 +126,17 @@ def data_compiler(race_weekend_name):
 
     return required_data(total_results)
 
+#requried_data method
+#
+#Description: This method compiles results and restructures it usings pandas as dataframes
+#
+#PRE-CONDTIONS: results should be dictionary
+#
+#POST-CONDITIONS: The results are returned in the list of df
+#
+#@params results is a dictionary
+#@return df_sorted is a dataframe
+
 def required_data(results):
     df = pd.DataFrame.from_dict(results, orient='index')
     
@@ -162,6 +150,17 @@ def required_data(results):
     df_sorted = df_sorted[cols[:1] + ['Race Finish Position'] + cols[1:]]
     df_sorted = df_sorted.fillna(0)
     return df_sorted
+
+#data_compiler_new method
+#
+#Description: This method compiles races results upto the weekend entered by the user
+#
+#PRE-CONDTIONS: race_weekend_name should be spelt correctly
+#
+#POST-CONDITIONS: The results are returned in the list of df
+#
+#@params race_weekend_name is a str
+#@return result is a list
 
 def data_compiler_new(race_weekend_name):
     result = []
@@ -181,6 +180,16 @@ def data_compiler_new(race_weekend_name):
     
     return result
 
+#current_race_data method
+#
+#Description: This method compiles races results  positions upto the weekend entered by the user
+#
+#PRE-CONDTIONS: race_weekend_name should be spelt correctly
+#
+#POST-CONDITIONS: The results are returned in the list of df
+#
+#@params race_weekend_name is a str
+#@return result is a list
 def current_race_data(race_weekend_name):
     data = data_compiler(race_weekend_name)
     data = data.drop(columns=['Race Finish Position', 'Grand Prix'], inplace=False)

@@ -5,7 +5,17 @@ from sklearn.preprocessing import MinMaxScaler
 from tf_keras.models import Sequential
 from tf_keras.layers import Dense, Dropout
 
-# Function to train the F1 model
+#train_f1_model method
+#
+#Description: This method takes the data in the form of a list and trains a model using deep learning from tensorflow keras
+#it also prints the loss and mae to give an idea of how accurate the model is.
+#
+#PRE-CONDITONS: The data should be a list of dataframes
+#
+#POST-CONDITIONS: The model is trained
+#
+#@params data_list is a list of dataframes
+#@return model, scalaar 
 def train_f1_model(data_list):
     # 1. Combine the list of DataFrames into a single DataFrame
     all_race_data = pd.concat(data_list, ignore_index=True)

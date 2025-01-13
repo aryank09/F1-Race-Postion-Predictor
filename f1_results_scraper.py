@@ -52,6 +52,15 @@ def result_scraper(url):
 
     return result
 
+#build_driver_url method
+#Description: This method receives the driver name and it accordingly produces a url for teh driver to get points 
+#
+#PRE-CONDITIONS: The driver name should be correctly spelt
+#
+#POST-CONDITIONS: url is built and returned
+#
+#@params driver_name, is str
+#@return is a str
 def build_driver_url(driver_name):
     
     base_url = "https://www.formula1.com/en/results/2024/drivers"
@@ -90,6 +99,15 @@ def build_driver_url(driver_name):
 
     return f"{base_url}/{driver_code}/{driver_url_name}"
 
+#build_constructor_url method
+#Description: This method receives the constructor name and it accordingly produces a url for teh constructor to get points 
+#
+#PRE-CONDITIONS: The constructor name should be correctly spelt
+#
+#POST-CONDITIONS: url is built and returned
+#
+#@params constructor_name, is str
+#@return is a str
 def build_constructor_url(constructor_name):
     constructors_url_map = {
     "McLaren Mercedes": "McLaren-Mercedes",
@@ -107,6 +125,17 @@ def build_constructor_url(constructor_name):
     base_url = "https://www.formula1.com/en/results/2024/team/"
 
     return f"{base_url}{constructors_url_map[constructor_name]}"
+
+#driver_points_scraper method
+#
+#Description: This method is resiponsible for scraping data to calculate driver points
+#
+#PRE-CONDITIONS: The race_weekend_name should be correctly spelt
+#
+#POST-CONDITIONS: drivers dictionary is returned which is a sum of the driver points upto that weekend
+#
+#@params race_weekend_name is a str
+#@return drivers is a dictionary
 
 def driver_points_scraper(race_weekend_name):
     drivers = {
@@ -182,6 +211,17 @@ def driver_points_scraper(race_weekend_name):
     
     return drivers
 
+#constructor_points_scraper method
+#
+#Description: This method is resiponsible for scraping data to calculate constructor points
+#
+#PRE-CONDITIONS: The race_weekend_name should be correctly spelt
+#
+#POST-CONDITIONS: constructors dictionary is returned which is a sum of the constructor points upto that weekend
+#
+#@params race_weekend_name is a str
+#@return drivers is a dictionary
+
 def constructors_points_scraper(race_weekend_name):
     constructors = {
     "McLaren Mercedes": 0,
@@ -255,6 +295,16 @@ def build_race_result_url(race_weekend_name):
     race_id = race_id_mapping.get(race_name_key)
     return f"https://www.formula1.com/en/results/2024/races/{race_id}/{race_name_key}/race-result"
 
+#race_result_position_scraper method
+#
+#Description: This method is resiponsible for scraping data to calculate race_result points
+#
+#PRE-CONDITIONS: The race_weekend_name should be correctly spelt
+#
+#POST-CONDITIONS: race_results dictionary is returned which is a sum of the race_result points upto that weekend
+#
+#@params race_weekend_name is a str
+#@return drivers is a dictionary
 
 def race_result_position_scraper(race_weekend_name):
     url = build_race_result_url(race_weekend_name)
