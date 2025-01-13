@@ -1,4 +1,3 @@
-#TODO: Switching to deep learning model
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -69,7 +68,7 @@ def predict_next_grand_prix_position(data_list, current_race_data_list):
 
     # Add the predicted position to the current race data
     current_race_data['Predicted Position'] = predictions.flatten()
-
+    #TODO: make the predictions print in the right format
     # Sort by the predicted positions
     sorted_predictions = current_race_data[['Driver', 'Predicted Position']].sort_values(by='Predicted Position', ascending=True)
     print(sorted_predictions)
