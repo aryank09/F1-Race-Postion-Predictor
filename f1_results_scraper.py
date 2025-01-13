@@ -218,7 +218,7 @@ def constructors_points_scraper(race_weekend_name):
             if len(cells) <= max(grand_prix_indx, pts_indx):
                 continue
 
-            try:  
+            try:
                 if (cells[grand_prix_indx].get_text(strip=True)).lower().replace(" ", "-") == (race_weekend_name).lower().replace(" ", "-"):
                     break
                 total_points += int(cells[pts_indx].get_text(strip=True))
