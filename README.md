@@ -1,11 +1,5 @@
 # F1-Race-Position-Predictor 🏎️🏁
 
-This project is a **work in progress** aimed at building a regression model to predict the top 5 finishers for an F1 race weekend. The model utilizes practice session data, qualifying results, driver points, and potentially constructor points to analyze performance trends and forecast race outcomes.
-
-## Features
-- **Comprehensive Data Analysis**: Incorporates practice session data, qualifying results, and driver points, with plans to include constructor points for improved predictions.
-# F1-Race-Position-Predictor 🏎️🏁
-
 This project is a **work in progress** aimed at building a neural network-based deep learning model to predict the top 5 finishers for an F1 race weekend. The model leverages practice session data, qualifying results, and driver points to analyze performance trends and forecast race outcomes.
 
 ## Features
