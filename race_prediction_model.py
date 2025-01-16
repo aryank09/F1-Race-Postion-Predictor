@@ -5,6 +5,30 @@ from sklearn.preprocessing import MinMaxScaler
 from tf_keras.models import Sequential
 from tf_keras.layers import Dense, Dropout
 
+#race result from bahrain
+drivers_result_key = {
+    'MaxVerstappenVER': 1,
+    'SergioPerezPER': 2,
+    'CarlosSainzSAI': 3,
+    'CharlesLeclercLEC': 4,
+    'GeorgeRussellRUS': 5,
+    'LandoNorrisNOR': 6,
+    'LewisHamiltonHAM': 7,
+    'OscarPiastriPIA': 8,
+    'FernandoAlonsoALO': 9,
+    'LanceStrollSTR': 10,
+    'ZhouGuanyuZHO': 11,
+    'KevinMagnussenMAG': 12,
+    'DanielRicciardoRIC': 13,
+    'YukiTsunodaTSU': 14,
+    'AlexanderAlbonALB': 15,
+    'NicoHulkenbergHUL': 16,
+    'EstebanOconOCO': 17,
+    'PierreGaslyGAS': 18,
+    'ValtteriBottasBOT': 19,
+    'LoganSargeantSAR': 20
+}
+
 #train_f1_model method
 #
 #Description: This method takes the data in the form of a list and trains a model using deep learning from tensorflow keras
@@ -75,6 +99,14 @@ def predict_top_5(current_race_data, model, scaler):
     driver_predictions = list(enumerate(predicted_positions, start=1))  
 
     #Sort by predicted positions (ascending) and get the top 5
-    top_5_drivers = sorted(driver_predictions, key=lambda x: x[1])[:5]
+    top_5_drivers = sorted((dp for dp in driver_predictions if dp[1] >= 0), key=lambda x: x[1])[:5]
+    
+    #Reverse the dictionary to map positions to driver names
+    position_to_driver = {value: key for key, value in drivers_result_key.items()}
 
-    return top_5_drivers
+    #Map the positions in the predictions to driver names
+    top_5_drivers_with_names = [(position_to_driver.get(pred[0], "Unknown Driver"), pred[1]) for pred in top_5_drivers]
+
+    formatted_output = ', '.join(driver[0] for driver in top_5_drivers_with_names)
+
+    return formatted_output
