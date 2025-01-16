@@ -68,11 +68,11 @@ def predict_top_5(current_race_data, model, scaler):
     #Scale the input features using the provided scaler
     scaled_data = scaler.transform(current_race_data[required_columns])
 
-    # Predict race finish positions
+    #Predict race finish positions
     predicted_positions = model.predict(scaled_data).flatten()
 
     #Combine driver indices with predictions
-    driver_predictions = list(enumerate(predicted_positions, start=1))  # Start driver index at 1
+    driver_predictions = list(enumerate(predicted_positions, start=1))  
 
     #Sort by predicted positions (ascending) and get the top 5
     top_5_drivers = sorted(driver_predictions, key=lambda x: x[1])[:5]
