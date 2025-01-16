@@ -33,6 +33,32 @@ race_id_mapping = {
     "abu-dhabi": 1252
     }
 
+drivers = {
+        "MaxVerstappenVER": 1,
+        "LandoNorrisNOR": 4,
+        "CharlesLeclercLEC": 16,
+        "OscarPiastriPIA": 81,
+        "CarlosSainzSAI": 55,
+        "GeorgeRussellRUS": 63,
+        "LewisHamiltonHAM": 44,
+        "SergioPerezPER": 11,
+        "FernandoAlonsoALO": 14,
+        "PierreGaslyGAS": 10,
+        "NicoHulkenbergHUL": 27,
+        "YukiTsunodaTSU": 22,
+        "LanceStrollSTR": 18,
+        "EstebanOconOCO": 31,
+        "KevinMagnussenMAG": 20,
+        "AlexanderAlbonALB": 23,
+        "DanielRicciardoRIC": 3,
+        "OliverBearmanBEA": 87,
+        "FrancoColapintoCOL": 43,
+        "ZhouGuanyuZHO": 24,
+        "LiamLawsonLAW": 30,
+        "ValtteriBottasBOT": 77,
+        "LoganSargeantSAR": 2,
+        "JackDoohanDOO": 7,
+    }
 #time_in_seconds methods
 #Description: This method takes the avalible time in str format and converts it to seconds
 #
@@ -113,6 +139,9 @@ def data_compiler(race_weekend_name):
             #Updating the session data
             total_results[driver_name][session_labels[session_number - 1]] = session_data
             
+            if driver_name in drivers:
+                total_results[driver_name]["Driver ID"] = drivers[driver_name]
+
             if driver_name in driver_points:
                 total_results[driver_name]["Driver Points"] = driver_points[driver_name]
 

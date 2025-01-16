@@ -19,10 +19,10 @@ if __name__ == "__main__":
     current_race_data_list = [current_data]
     
 
-    trained_model, trained_scaler = prdctr.train_f1_model(data)
-    top_5 = prdctr.predict_top_5(current_data, trained_model, trained_scaler)
-    print("Top 5 Predicted Drivers and Their Positions:")
-    print(top_5)
+    # trained_model, trained_scaler = prdctr.train_f1_model(data)
+    # top_5 = prdctr.predict_top_5(current_data, trained_model, trained_scaler)
+    # print("Top 5 Predicted Drivers and Their Positions:")
+    # print(top_5)
     #running the prediction model
     #prdctr.predict_next_grand_prix_position(data, current_race_data_list)
 
