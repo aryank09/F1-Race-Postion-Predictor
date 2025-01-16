@@ -58,3 +58,23 @@ def train_f1_model(data_list):
 
     return model, scaler
 
+def predict_top_5(current_race_data, model, scaler):
+    #Check if the required columns exist in the data
+    required_columns = ['Practice 1', 'Practice 2', 'Practice 3', 'Qualifying', 'Driver Points']
+    for col in required_columns:
+        if col not in current_race_data.columns:
+            raise ValueError(f"Missing required column: {col}")
+
+    #Scale the input features using the provided scaler
+    scaled_data = scaler.transform(current_race_data[required_columns])
+
+    # Predict race finish positions
+    predicted_positions = model.predict(scaled_data).flatten()
+
+    #Combine driver indices with predictions
+    driver_predictions = list(enumerate(predicted_positions, start=1))  # Start driver index at 1
+
+    #Sort by predicted positions (ascending) and get the top 5
+    top_5_drivers = sorted(driver_predictions, key=lambda x: x[1])[:5]
+
+    return top_5_drivers
