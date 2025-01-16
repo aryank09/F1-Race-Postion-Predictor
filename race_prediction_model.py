@@ -34,7 +34,7 @@ drivers_result_key = {
 #Description: This method takes the data in the form of a list and trains a model using deep learning from tensorflow keras
 #it also prints the loss and mae to give an idea of how accurate the model is.
 #
-#PRE-CONDITONS: The data should be a list of dataframes
+#PRE-CONDITONS: The data should be a list of dataframes and the reuired modules should be present
 #
 #POST-CONDITIONS: The model is trained
 #
