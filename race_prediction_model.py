@@ -1,3 +1,7 @@
+#Description: This is the predicition model program to find the top 5 contenders for winning a race
+#Author: Aryan Khanna
+#Version: Jan 16th, 2025
+
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
