@@ -33,6 +33,7 @@ race_id_mapping = {
     "abu-dhabi": 1252
     }
 
+#driver IDs to map theier driver number for identifying
 drivers = {
         "MaxVerstappenVER": 1,
         "LandoNorrisNOR": 4,

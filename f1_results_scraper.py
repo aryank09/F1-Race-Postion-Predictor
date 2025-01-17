@@ -100,7 +100,7 @@ def build_driver_url(driver_name):
     return f"{base_url}/{driver_code}/{driver_url_name}"
 
 #build_constructor_url method
-#Description: This method receives the constructor name and it accordingly produces a url for teh constructor to get points 
+#Description: This method receives the constructor name and it accordingly produces a url for get constructor to get points 
 #
 #PRE-CONDITIONS: The constructor name should be correctly spelt
 #
@@ -268,6 +268,16 @@ def constructors_points_scraper(race_weekend_name):
         constructors[constructor_name] = total_points
     
     return constructors
+
+#build_race_result_url method
+#Description: This method receives the constructor name and it accordingly produces a url for getting constructor to get points 
+#
+#PRE-CONDITIONS: The race_weekend name name should be correctly spelt
+#
+#POST-CONDITIONS: url is built and returned
+#
+#@params race_weekend_name, is str
+#@return is a str
 
 def build_race_result_url(race_weekend_name):
     race_id_mapping = {

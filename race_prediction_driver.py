@@ -18,7 +18,7 @@ if __name__ == "__main__":
     print(data)
     current_race_data_list = [current_data]
     
-
+    #prediction model starts
     trained_model, trained_scaler = prdctr.train_f1_model(data)
     top_5 = prdctr.predict_top_5(current_data, trained_model, trained_scaler)
     print("Top 5 Predicted Drivers in contention for winning are:")

@@ -82,29 +82,41 @@ def train_f1_model(data_list):
 
     return model, scaler
 
+#predict_top_5 method
+#
+#Description: This method uses the trained model to carry out predictions, with the help of the current race data
+#(excluding the race finish position, because that has to be predicted)
+#
+#PRE-CONDITION: This method requires the trained model, along with the required packages installed
+#
+#POST-CONDITIONS: Top 5 contenders for the race win are predicted
+#
+#@params current_race_data is dataframe, model and scalar are data from using tf_keras
+#@return formated_output is str
+
 def predict_top_5(current_race_data, model, scaler):
-    #Check if the required columns exist in the data
+    #Checking if the required columns exist in the data
     required_columns = ['Practice 1', 'Practice 2', 'Practice 3', 'Qualifying', 'Driver Points']
     for col in required_columns:
         if col not in current_race_data.columns:
             raise ValueError(f"Missing required column: {col}")
 
-    #Scale the input features using the provided scaler
+    #Scaling the input features using the provided scaler
     scaled_data = scaler.transform(current_race_data[required_columns])
 
-    #Predict race finish positions
+    #Predicting race finish positions
     predicted_positions = model.predict(scaled_data).flatten()
 
-    #Combine driver indices with predictions
+    #Combining driver indices with predictions
     driver_predictions = list(enumerate(predicted_positions, start=1))  
 
-    #Sort by predicted positions (ascending) and get the top 5
+    #Sorting by predicted positions (ascending) and get the top 5
     top_5_drivers = sorted((dp for dp in driver_predictions if dp[1] >= 0), key=lambda x: x[1])[:5]
     
-    #Reverse the dictionary to map positions to driver names
+    #Reversing the dictionary to map positions to driver names
     position_to_driver = {value: key for key, value in drivers_result_key.items()}
 
-    #Map the positions in the predictions to driver names
+    #Mapping the positions in the predictions to driver names
     top_5_drivers_with_names = [(position_to_driver.get(pred[0], "Unknown Driver"), pred[1]) for pred in top_5_drivers]
 
     formatted_output = ', '.join(driver[0] for driver in top_5_drivers_with_names)
