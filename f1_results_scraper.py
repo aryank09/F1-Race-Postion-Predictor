@@ -4,6 +4,53 @@
 
 import requests
 from bs4 import BeautifulSoup
+import time
+import logging
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+def create_session_with_retries():
+    """Create a requests session with retry strategy"""
+    session = requests.Session()
+    
+    retry_strategy = Retry(
+        total=3,
+        status_forcelist=[429, 500, 502, 503, 504],
+        method_whitelist=["HEAD", "GET", "OPTIONS"],
+        backoff_factor=1
+    )
+    
+    adapter = HTTPAdapter(max_retries=retry_strategy)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
+    
+    return session
+
+def safe_web_request(url, session=None, timeout=10):
+    """Make a safe web request with error handling"""
+    if session is None:
+        session = create_session_with_retries()
+    
+    try:
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        }
+        
+        response = session.get(url, headers=headers, timeout=timeout)
+        response.raise_for_status()
+        
+        # Add delay to be respectful to the server
+        time.sleep(0.5)
+        
+        return response
+        
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Error fetching {url}: {e}")
+        return None
 
 #result_scraper method
 #Description: This method receives the required url and scrapes the results to add it into a list in the format of
@@ -16,41 +63,62 @@ from bs4 import BeautifulSoup
 #@params url, is str
 #@return result, is a list
 def result_scraper(url):
-
-    response = requests.get(url)
-    if response.status_code != 200:
-        print(response.status_code)
-        print("Failed to retrieve the webpage.")
+    if not url:
+        logger.warning("URL is None or empty")
         return []
 
-    soup = BeautifulSoup(response.text, 'html.parser')
-    rows = soup.select("tr")
+    session = create_session_with_retries()
+    response = safe_web_request(url, session)
+    
+    if response is None:
+        logger.error(f"Failed to retrieve webpage: {url}")
+        return []
 
-    if "practice" or "starting" in url:
-        pos_idx = 0
-        driver_idx = 2
-        team_idx = 3
-        time_idx = 4
+    try:
+        soup = BeautifulSoup(response.text, 'html.parser')
+        rows = soup.select("tr")
 
-    result = []
+        if "practice" in url or "starting" in url:
+            pos_idx = 0
+            driver_idx = 2
+            team_idx = 3
+            time_idx = 4
+        else:
+            # For race results
+            pos_idx = 0
+            driver_idx = 2
+            team_idx = 3
+            time_idx = 4
 
-    for row in rows:
-        cells = row.find_all("td")
+        result = []
 
-        #Skip rows that don't have enough cells
-        if len(cells) <= max(pos_idx, driver_idx, team_idx, time_idx):
-            continue
+        for row in rows:
+            cells = row.find_all("td")
+
+            #Skip rows that don't have enough cells
+            if len(cells) <= max(pos_idx, driver_idx, team_idx, time_idx):
+                continue
+            
+            try:
+                pos = cells[pos_idx].get_text(strip=True)
+                driver = cells[driver_idx].get_text(strip=True)
+                team = cells[team_idx].get_text(strip=True)
+                lap_time = cells[time_idx].get_text(strip=True)
+                
+                # Validate data quality
+                if pos and driver and team:
+                    result.append([driver, team, lap_time, pos])
+                    
+            except (IndexError, AttributeError) as e:
+                logger.warning(f"Error parsing row: {e}")
+                continue  #Skip problematic rows
+
+        logger.info(f"Successfully scraped {len(result)} results from {url}")
+        return result
         
-        try:
-            pos = cells[pos_idx].get_text(strip=True)
-            driver = cells[driver_idx].get_text(strip=True)
-            team = cells[team_idx].get_text(strip=True)
-            lap_time = cells[time_idx].get_text(strip=True)
-            result.append([driver, team, lap_time, pos])
-        except IndexError:
-            continue  #Skip problematic rows
-
-    return result
+    except Exception as e:
+        logger.error(f"Error parsing HTML from {url}: {e}")
+        return []
 
 #build_driver_url method
 #Description: This method receives the driver name and it accordingly produces a url for teh driver to get points 
